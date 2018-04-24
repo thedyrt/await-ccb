@@ -59,7 +59,6 @@ from .build_poller import BuildPoller
 
 def main():
     arguments = docopt(__doc__, version='await-ccb 0.1.0')
-    print(arguments)
 
     poller = BuildPoller(
         credentials_path=arguments['--credentials'],
