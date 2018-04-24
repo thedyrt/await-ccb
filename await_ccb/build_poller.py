@@ -27,14 +27,24 @@ class BuildPoller:
     def await_success(self):
         builds = []
 
+        def log_builds():
+            if builds:
+                for b in builds:
+                    print('- {0}: {1}'.format(b['status'], b['id']))
+                print('===')
+            else:
+                print('No builds found')
+
         def any_successful():
             return any([b['status'] in self.SUCCESSS_STATES for b in builds])
 
         def any_incomplete():
             return any([b['status'] in self.INCOMPLETE_STATES for b in builds])
 
+        print('Searching for active or successful builds...')
         for search_attempt in range(1, self.search_limit):
             builds = self.builds_for_commit()
+            log_builds()
             if any_incomplete() or any_successful():
                 break
 
@@ -44,8 +54,13 @@ class BuildPoller:
             build = self.run_trigger()
             if build:
                 builds = [build]
+                log_builds()
+
+        if any_incomplete():
+            print('Waiting for builds to complete...')
 
         for poll_attempt in range(1, self.poll_limit):
+            log_builds()
             if not any_incomplete():
                 break
 
@@ -59,6 +74,8 @@ class BuildPoller:
 
         if not trigger:
             return None
+
+        print('Running build trigger {0}'.format(trigger['id']))
 
         result = (
             self.client
