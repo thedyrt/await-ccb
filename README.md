@@ -2,17 +2,16 @@
 
 Given a git SHA, waits for a corresponding [Google Cloud Container Builder](https://cloud.google.com/container-builder/) build to complete successfully.
 
-
 - If a successful build exists, exits 0.
 - If a running or queued build exists, polls until no running builds are found
-  or the --poll-limit is reached.
+  or the --poll-limit is reached. Exits 0 if any are successful, 1 on failure.
 - If no running/queued build is found in the initial search, repeats the search
   up to --search-limit times to see if a running build appears.
 
 ## Install
 
     pip install await-ccb
-    
+
 ## Usage
 
 ```
