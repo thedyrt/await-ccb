@@ -20,6 +20,12 @@ class BuildPoller:
                         'cloudbuild', 'v1', credentials=self.credentials)
 
     def __load_credentials(self, credentials_path):
+        if not credentials_path:
+            print((
+                'Could not load credentials. Proivde account credentials via '
+                '--credentials or set GOOGLE_APPLICATION_CREDENTIALS'))
+            exit(2)
+
         return service_account.Credentials.from_service_account_file(
                 credentials_path,
                 scopes=['https://www.googleapis.com/auth/cloud-platform'])

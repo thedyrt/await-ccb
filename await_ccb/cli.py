@@ -10,14 +10,15 @@ to complete successfully.
   up to --search-limit times to see if a running build appears.
 
 Usage:
-    await-ccb -c credentials.json -r repo-name -s git-sha
-        [-t -p my-project --poll-interval 5 --poll-limit 360 --search-limit 5]
+    await-ccb -r repo-name -s git-sha [-c credentials.json -t]
+        [-p my-project --poll-interval 5 --poll-limit 360 --search-limit 5]
     await-ccb --help
     await-ccb --version
 
 Options:
     -c CREDENTIALS_JSON, --credentials CREDENTIALS_JSON
         Path to service account credentials in Google JSON format
+        This can also be provided via GOOGLE_APPLICATION_CREDENTIALS
 
     -p PROJECT, --project PROJECT
         Google Code Project ID, defaults to project from credentials
@@ -51,6 +52,7 @@ Options:
     --version
         Show version info
 """
+import os
 from docopt import docopt
 from sys import exit
 
@@ -61,7 +63,9 @@ def main():
     arguments = docopt(__doc__, version='await-ccb 0.1.0')
 
     poller = BuildPoller(
-        credentials_path=arguments['--credentials'],
+        credentials_path=(
+            arguments['--credentials'] or
+            os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')),
         project=arguments['--project'],
         repo=arguments['--repo'],
         sha=arguments['--sha'],
