@@ -41,9 +41,9 @@ class BuildPoller:
             sleep(self.poll_interval)
 
         if self.trigger_build and not (any_successful() or any_incomplete()):
-            with self.run_trigger() as build:
-                if build:
-                    builds = [build]
+            build = self.run_trigger()
+            if build:
+                builds = [build]
 
         for poll_attempt in range(1, self.poll_limit):
             if not any_incomplete():
